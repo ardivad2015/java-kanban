@@ -1,43 +1,41 @@
 import service.TaskManager;
 import model.*;
 
+import java.util.ArrayList;
+
 public class Main {
 
     public static TaskManager taskManager = new TaskManager();
 
     public static void main(String[] args) {
 
-
-
-        Task simpleTask1 = taskManager.createSimpleTask("Простая задача 1","");
-
-        Epic epic1 =  taskManager.createEpic("Эпик 1","");
-        Subtask subtask1 = taskManager.createSubtask(epic1,"Эпик 1 Подзадача 1","");
-
-        Epic epic2 =  taskManager.createEpic("Эпик 2","");
-        Subtask subtask2 = taskManager.createSubtask(epic2,"Эпик 2 Подзадача 1","");
-        Subtask subtask3 = taskManager.createSubtask(epic2,"Эпик 2 Подзадача 2","");
+        taskManager.createSimpleTask(new Task(taskManager.nextId(),"Простая задача 1",""));
+        taskManager.createEpic(new Epic(new Task(taskManager.nextId(),"Эпик 1","")));
+        taskManager.createSubtask(new Subtask(2,new Task(taskManager.nextId(),"Эпик 1 подзадача 1","")));
+        taskManager.createEpic(new Epic(new Task(taskManager.nextId(),"Эпик 2","")));
+        taskManager.createSubtask(new Subtask(4,new Task(taskManager.nextId(),"Эпик 2 подзадача 1","")));
+        taskManager.createSubtask(new Subtask(4,new Task(taskManager.nextId(),"Эпик 2 подзадача 2","")));
 
         printTasks();
 
-        simpleTask1.setStatus(TaskStatuses.DONE);
-        taskManager.updateSimpleTask(simpleTask1);
+        Subtask subtask = new Subtask(4,new Task(5,"Эпик 2 подзадача 2",""));
+        subtask.setStatus(TaskStatuses.DONE);
+        taskManager.updateSubtask(subtask);
 
-        subtask1.setStatus(TaskStatuses.DONE);
-        taskManager.updateSubtask(subtask1);
+        printTasks();
 
-        subtask2.setStatus(TaskStatuses.DONE);
-        taskManager.updateSubtask(subtask2);
+        Epic epic = new Epic(new Task(4,"Эпик 2 обновленный",""));
+        ArrayList<Integer> epicSubsId = epic.getSubtasksId();
+        epicSubsId.add(5);
+        taskManager.updateEpic(epic);
 
         printTasks();
 
         taskManager.removeEpic(4);
         printTasks();
-
     }
 
     public static void printTasks() {
-
         System.out.println("Задачи");
         System.out.println(taskManager.getSimpleTaskList());
 

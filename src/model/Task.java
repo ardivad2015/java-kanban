@@ -3,28 +3,6 @@ package model;
 import java.util.Objects;
 
 public class Task {
-    @Override
-    public String toString() {
-        return "{" +
-                "id=" + id +
-                ", topic='" + topic + '\'' +
-                ", body='" + body + '\'' +
-                ", status=" + status +
-                '}';
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        Task task = (Task) o;
-        return id == task.id;
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(id);
-    }
 
     private final int id;
     private String topic;
@@ -60,14 +38,12 @@ public class Task {
     }
 
     public Task(int id, String topic, String body) {
-
         if (Objects.isNull(topic)) {
             topic = "";
         }
         if (Objects.isNull(body)) {
             body = "";
         }
-
         this.id = id;
         this.topic = topic;
         this.body = body;
@@ -81,4 +57,26 @@ public class Task {
         this.status = TaskStatuses.NEW;
     }
 
+    @Override
+    public String toString() {
+        return "{" +
+                "id=" + id +
+                ", topic='" + topic + '\'' +
+                ", body='" + body + '\'' +
+                ", status=" + status +
+                '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Task task = (Task) o;
+        return id == task.id;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
+    }
 }
