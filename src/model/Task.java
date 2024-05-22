@@ -4,7 +4,7 @@ import java.util.Objects;
 
 public class Task {
 
-    private final int id;
+    private int id;
     private String topic;
     private String body;
     private TaskStatuses status;
@@ -25,6 +25,9 @@ public class Task {
         this.body = body;
     }
 
+    public void setId(int id) {
+        this.id = id;
+    }
     public int getId() {
         return id;
     }
@@ -37,21 +40,19 @@ public class Task {
         this.status = status;
     }
 
-    public Task(int id, String topic, String body) {
+    public Task(String topic, String body) {
         if (Objects.isNull(topic)) {
             topic = "";
         }
         if (Objects.isNull(body)) {
             body = "";
         }
-        this.id = id;
         this.topic = topic;
         this.body = body;
         this.status = TaskStatuses.NEW;
     }
 
     public Task(Task task) {
-        this.id = task.id;
         this.topic = task.topic;
         this.body = task.body;
         this.status = TaskStatuses.NEW;
@@ -79,4 +80,5 @@ public class Task {
     public int hashCode() {
         return Objects.hash(id);
     }
+
 }

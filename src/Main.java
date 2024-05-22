@@ -1,41 +1,58 @@
-import service.TaskManager;
+import service.InMemoryTaskManager;
 import model.*;
+import service.Managers;
+import service.TaskManager;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class Main {
 
-    public static TaskManager taskManager = new TaskManager();
 
     public static void main(String[] args) {
 
-        taskManager.createSimpleTask(new Task(taskManager.nextId(),"Простая задача 1",""));
-        taskManager.createEpic(new Epic(new Task(taskManager.nextId(),"Эпик 1","")));
-        taskManager.createSubtask(new Subtask(2,new Task(taskManager.nextId(),"Эпик 1 подзадача 1","")));
-        taskManager.createEpic(new Epic(new Task(taskManager.nextId(),"Эпик 2","")));
-        taskManager.createSubtask(new Subtask(4,new Task(taskManager.nextId(),"Эпик 2 подзадача 1","")));
-        taskManager.createSubtask(new Subtask(4,new Task(taskManager.nextId(),"Эпик 2 подзадача 2","")));
+        Managers manager = new Managers();
+        TaskManager taskManager = manager.getDefault();
 
-        printTasks();
+        Task simpleTask1 = new Task("Простая задача 1","");
+        taskManager.addSimpleTask(simpleTask1);
 
-        Subtask subtask = new Subtask(4,new Task(5,"Эпик 2 подзадача 2",""));
-        subtask.setStatus(TaskStatuses.DONE);
-        taskManager.updateSubtask(subtask);
+        Epic epic1  = new Epic(new Task("Эпик 1",""));
+        taskManager.addEpic(epic1);
 
-        printTasks();
+        Subtask subtask1 = new Subtask(epic1.getId(),new Task("Эпик 1 подзадача 1",""));
+        taskManager.addSubtask(subtask1);
 
-        Epic epic = new Epic(new Task(4,"Эпик 2 обновленный",""));
-        ArrayList<Integer> epicSubsId = epic.getSubtasksId();
-        epicSubsId.add(5);
-        taskManager.updateEpic(epic);
+        Epic epic2  = new Epic(new Task("Эпик 2",""));
+        taskManager.addEpic(epic2);
 
-        printTasks();
+        Subtask subtask2 = new Subtask(epic2.getId(),new Task("Эпик 2 подзадача 1",""));
+        taskManager.addSubtask(subtask2);
+        Subtask subtask3 = new Subtask(epic2.getId(),new Task("Эпик 2 подзадача 2",""));
+        taskManager.addSubtask(subtask3);
 
-        taskManager.removeEpic(4);
-        printTasks();
+        System.out.println(taskManager.getEpicSubtasks(taskManager.getEpic(epic2.getId())));
+        printTasks(taskManager);
+
+        subtask2.setStatus(TaskStatuses.DONE);
+        taskManager.updateSubtask(subtask2);
+
+        printTasks(taskManager);
+
+        List<Integer> epicSubsId = epic2.getSubtasksId();
+        epicSubsId.add(subtask1.getId());
+        epicSubsId.add(subtask2.getId());
+        epicSubsId.add(subtask3.getId());
+        taskManager.updateEpic(epic2);
+
+        System.out.println(taskManager.getEpicSubtasks(taskManager.getEpic(epic2.getId())));
+        System.out.println(taskManager.getEpicSubtasks(taskManager.getEpic(epic1.getId())));
+        printTasks(taskManager);
+
+
     }
 
-    public static void printTasks() {
+    public static void printTasks(TaskManager taskManager) {
         System.out.println("Задачи");
         System.out.println(taskManager.getSimpleTaskList());
 
