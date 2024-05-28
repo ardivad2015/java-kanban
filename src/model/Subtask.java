@@ -1,5 +1,7 @@
 package model;
 
+import java.util.Objects;
+
 public class Subtask extends Task {
 
     private int epicId;
@@ -16,4 +18,5 @@ public class Subtask extends Task {
     public void setEpicId(int epicId) {
         this.epicId = epicId;
     }
+
 }

@@ -4,6 +4,7 @@ import model.Epic;
 import model.Subtask;
 import model.Task;
 import model.TaskStatuses;
+import util.Managers;
 
 import java.util.*;
 
@@ -17,29 +18,17 @@ public class InMemoryTaskManager implements TaskManager {
 
     @Override
     public void addSimpleTask(Task task) {
-        if (Objects.isNull(task)) {
-            return;
-        }
-        setTaskId(task);
-        simpleTasks.put(task.getId(), task);
+        addTaskStorage(simpleTasks,task);
     }
 
     @Override
     public void addEpic(Epic epic) {
-        if (Objects.isNull(epic)) {
-            return;
-        }
-        setTaskId(epic);
-        epics.put(epic.getId(), epic);
+        addTaskStorage(epics,epic);
     }
 
     @Override
     public void addSubtask(Subtask subtask) {
-        if (Objects.isNull(subtask)) {
-           return;
-        }
-        setTaskId(subtask);
-        subtasks.put(subtask.getId(),subtask);
+        addTaskStorage(subtasks,subtask);
         editEpicSubIdsList(EpicSubsActions.ADD,subtask);
     }
 
@@ -51,23 +40,26 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
     @Override
-    public void updateEpic(Epic epic) {
-        if (Objects.isNull(epic)) {
+    public void updateEpic(Epic newEpic) {
+        if (Objects.isNull(newEpic)) {
             return;
         }
 
-        final int epicId = epic.getId();
-        final List<Integer> epicSubIds = epic.getSubtasksId();
+        final int epicId = newEpic.getId();
+        final List<Integer> newEpicSubIds = newEpic.getSubtasksId();
         final Epic currentEpic = epics.get(epicId);
         final List<Integer> subsIdToRemove = new ArrayList<>();
         final List<Integer> subsIdsToAdd = new ArrayList<>();
 
-        epics.put(epicId, epic);
+        if (newEpic == currentEpic) {//Передали тот же объект, обрабатывать не нужно
+            return;
+        }
+        epics.put(epicId, newEpic);
         if (!Objects.isNull(currentEpic)) {
             final List<Integer> currentEpicSubIds = currentEpic.getSubtasksId();
             subsIdToRemove.addAll(currentEpicSubIds);
-            subsIdToRemove.removeAll(epicSubIds);
-            subsIdsToAdd.addAll(epicSubIds);
+            subsIdToRemove.removeAll(newEpicSubIds);
+            subsIdsToAdd.addAll(newEpicSubIds);
             subsIdsToAdd.removeAll(currentEpicSubIds);
         }
         for (int subsId : subsIdToRemove) {
@@ -76,35 +68,36 @@ public class InMemoryTaskManager implements TaskManager {
         for (int subsId : subsIdsToAdd) {
             Subtask subtask = subtasks.get(subsId);
             if (Objects.isNull(subtask)) {
-                epicSubIds.remove((Integer) subsId);
+                newEpicSubIds.remove((Integer) subsId);
             }
             if (epicId != subtask.getEpicId()) {
                 editEpicSubIdsList(EpicSubsActions.REMOVE, subtask);
                 subtask.setEpicId(epicId);
             }
         }
-        updateEpicStatus(epic);
+        updateEpicStatus(newEpic);
     }
 
     @Override
-    public void updateSubtask(Subtask subtask) {
-        if (Objects.isNull(subtask)) {
+    public void updateSubtask(Subtask newSubtask) {
+        if (Objects.isNull(newSubtask)) {
             return;
         }
 
-        final int subtaskId = subtask.getId();
+        final int subtaskId = newSubtask.getId();
         final Subtask currentSubtask = subtasks.get(subtaskId);
 
-        subtasks.put(subtaskId,subtask);
+        subtasks.put(subtaskId,newSubtask);
         if (!Objects.isNull(currentSubtask)) {
-           if (currentSubtask.getEpicId() != subtask.getEpicId()) {
-               editEpicSubIdsList(EpicSubsActions.REMOVE,currentSubtask);
-           } else {
-               Epic epic = epics.get(subtask.getEpicId());
-               updateEpicStatus(epic);
-           }
+            if (currentSubtask.getEpicId() != newSubtask.getEpicId()) {
+                editEpicSubIdsList(EpicSubsActions.REMOVE,currentSubtask);
+                editEpicSubIdsList(EpicSubsActions.ADD,newSubtask);
+            } else {
+                Epic epic = epics.get(newSubtask.getEpicId());
+                updateEpicStatus(epic);
+            }
         } else {
-            editEpicSubIdsList(EpicSubsActions.ADD,subtask);
+            editEpicSubIdsList(EpicSubsActions.ADD,newSubtask);
         }
     }
 
@@ -295,11 +288,20 @@ public class InMemoryTaskManager implements TaskManager {
         }
     }
 
-    private void setTaskId(Task task) {
+    private int setTaskId(Task task) {
         if (Objects.isNull(task)) {
-            return;
+            return -1;
         }
         idGen = idGen + 1;
         task.setId(idGen);
+        return idGen;
+    }
+
+    private <T extends Task> void addTaskStorage(Map<Integer, T> storage, T task) {
+        final int taskId = setTaskId(task);
+
+        if (taskId > 0) {
+            storage.put(taskId,task);
+        }
     }
 }
