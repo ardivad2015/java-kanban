@@ -7,7 +7,7 @@ import service.TaskManager;
 
 public class Managers {
 
-    public TaskManager getDefault() {
+    public static TaskManager getDefaultTaskManager() {
         return new InMemoryTaskManager();
     }
 

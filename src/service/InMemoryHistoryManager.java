@@ -2,14 +2,14 @@ package service;
 
 import model.Task;
 
-import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
 
 public class InMemoryHistoryManager implements HistoryManager{
 
     private static final int DEFAULT_CAPACITY = 10;
-    private final List<Task> historyList = new ArrayList<>(DEFAULT_CAPACITY);
+    private final List<Task> historyList = new LinkedList<>();
 
     @Override
     public void add(Task task) {

@@ -8,8 +8,7 @@ class ManagersTest {
 
     @Test
     void getDefaultTaskManager() {
-        Managers managers = new Managers();
-        assertNotNull(managers.getDefault(),"Вместо Менеджера задач возвращает Null");
+        assertNotNull(Managers.getDefaultTaskManager(),"Вместо Менеджера задач возвращает Null");
     }
 
     @Test

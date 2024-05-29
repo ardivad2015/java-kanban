@@ -8,8 +8,7 @@ public class Main {
 
     public static void main(String[] args) {
 
-        Managers manager = new Managers();
-        TaskManager taskManager = manager.getDefault();
+        TaskManager taskManager = Managers.getDefaultTaskManager();
 
         for (int i = 1; i <= 10; i++) {
         taskManager.addSimpleTask(new Task("Простая задача "+i,""));
