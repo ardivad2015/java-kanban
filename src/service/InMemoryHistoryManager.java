@@ -85,7 +85,6 @@ public class InMemoryHistoryManager implements HistoryManager{
         while (Objects.nonNull(node.next)) {
             node = node.next;
             historyList.add(node.task);
-
         }
         return historyList;
     }
