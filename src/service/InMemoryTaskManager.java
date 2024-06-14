@@ -64,6 +64,7 @@ public class InMemoryTaskManager implements TaskManager {
         }
         for (int subsId : subsIdToRemove) {
             subtasks.remove(subsId);
+            historyManager.remove(subsId);
         }
         for (int subsId : subsIdsToAdd) {
             Subtask subtask = subtasks.get(subsId);
@@ -118,17 +119,21 @@ public class InMemoryTaskManager implements TaskManager {
 
     @Override
     public void removeAllSimpleTasks() {
+        clearHistory(simpleTasks);
         simpleTasks.clear();
     }
 
     @Override
     public void removeAllEpics() {
+        clearHistory(epics);
+        clearHistory(subtasks);
         epics.clear();
         subtasks.clear();
     }
 
     @Override
     public void removeAllSubtasks() {
+        clearHistory(subtasks);
         subtasks.clear();
         for (Epic epic : epics.values()) {
             epic.getSubtasksId().clear();
@@ -160,6 +165,7 @@ public class InMemoryTaskManager implements TaskManager {
     @Override
     public void removeSimpleTask(int id) {
         simpleTasks.remove(id);
+        historyManager.remove(id);
     }
 
     @Override
@@ -175,9 +181,11 @@ public class InMemoryTaskManager implements TaskManager {
         if (!epicSubIds.isEmpty()) {
             for (int subId : epicSubIds) {
                subtasks.remove(subId);
+               historyManager.remove(subId);
            }
         }
         epics.remove(id);
+        historyManager.remove(id);
     }
 
     @Override
@@ -189,6 +197,7 @@ public class InMemoryTaskManager implements TaskManager {
         }
         editEpicSubIdsList(EpicSubsActions.REMOVE,subtask);
         subtasks.remove(id);
+        historyManager.remove(id);
     }
 
     @Override
@@ -303,5 +312,11 @@ public class InMemoryTaskManager implements TaskManager {
         if (taskId > 0) {
             storage.put(taskId,task);
         }
+    }
+
+    private <T extends Task> void clearHistory(Map<Integer, T> storage) {
+       for (int taskId : storage.keySet()) {
+           historyManager.remove(taskId);
+       }
     }
 }
