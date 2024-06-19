@@ -51,8 +51,8 @@ public class InMemoryTaskManager implements TaskManager {
         final List<Integer> subsIdToRemove = new ArrayList<>();
         final List<Integer> subsIdsToAdd = new ArrayList<>();
 
-        if (newEpic == currentEpic) {//Передали тот же объект, обрабатывать не нужно
-            return;
+        if (newEpic == currentEpic) {
+            return;  //Передали тот же объект, обрабатывать не нужно
         }
         epics.put(epicId, newEpic);
         if (!Objects.isNull(currentEpic)) {
@@ -279,7 +279,7 @@ public class InMemoryTaskManager implements TaskManager {
         boolean isContains = epicSubsId.contains(subId);
         boolean isModified = false;
 
-        if(isContains && action == EpicSubsActions.REMOVE) {
+        if (isContains && action == EpicSubsActions.REMOVE) {
             epicSubsId.remove((Integer) subId);
             isModified = true;
         } else if (!isContains && action == EpicSubsActions.ADD) {
