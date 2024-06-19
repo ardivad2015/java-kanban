@@ -4,7 +4,7 @@ import model.Task;
 
 import java.util.*;
 
-public class InMemoryHistoryManager implements HistoryManager{
+public class InMemoryHistoryManager implements HistoryManager {
 
     private final Map<Integer, Node> nodes = new HashMap<>();
     private Node lastViewed;
@@ -53,11 +53,11 @@ public class InMemoryHistoryManager implements HistoryManager{
         if (Objects.isNull(node)) {
             node = new Node(task);
             addAsLastViewed(node);
-            nodes.put(taskId,node);
+            nodes.put(taskId, node);
         } else {
-           removeNode(node);
-           addAsLastViewed(node);
-           node.task = task;
+            removeNode(node);
+            addAsLastViewed(node);
+            node.task = task;
         }
     }
 
