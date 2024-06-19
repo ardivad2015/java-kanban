@@ -16,6 +16,7 @@ public class Task {
     public void setTopic(String topic) {
         this.topic = topic;
     }
+
     public String getBody() {
         return body;
     }
@@ -23,6 +24,7 @@ public class Task {
     public void setId(int id) {
         this.id = id;
     }
+
     public int getId() {
         return id;
     }
@@ -80,5 +82,4 @@ public class Task {
     public int hashCode() {
         return Objects.hash(id);
     }
-
 }
