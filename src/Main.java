@@ -51,6 +51,7 @@ public class Main {
         taskManager.removeEpic(epic1Id);
         printHistory(taskManager);
     }
+
     public static void printHistory(TaskManager taskManager) {
         System.out.println("=====История=====");
         for (Task task : taskManager.getHistory()) {
@@ -58,6 +59,7 @@ public class Main {
         }
         System.out.println("=====Конец=====");
     }
+
     public static void printTasks(TaskManager taskManager) {
         System.out.println("Задачи");
         System.out.println(taskManager.getSimpleTaskList());
