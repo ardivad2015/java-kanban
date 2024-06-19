@@ -88,7 +88,7 @@ public class InMemoryTaskManager implements TaskManager {
         final int subtaskId = newSubtask.getId();
         final Subtask currentSubtask = subtasks.get(subtaskId);
 
-        subtasks.put(subtaskId,newSubtask);
+        subtasks.put(subtaskId,newSubtask.copy());
         if (!Objects.isNull(currentSubtask)) {
             if (currentSubtask.getEpicId() != newSubtask.getEpicId()) {
                 editEpicSubIdsList(EpicSubsActions.REMOVE,currentSubtask);
@@ -104,17 +104,17 @@ public class InMemoryTaskManager implements TaskManager {
 
     @Override
     public List<Task> getSimpleTaskList() {
-        return new ArrayList<>(simpleTasks.values());
+        return getTaskListFromStorage(simpleTasks);
     }
 
     @Override
     public List<Epic> getEpicList() {
-        return new ArrayList<>(epics.values());
+        return getTaskListFromStorage(epics);
     }
 
     @Override
     public List<Subtask> getSubtaskList() {
-        return new ArrayList<>(subtasks.values());
+        return getTaskListFromStorage(subtasks);
     }
 
     @Override
@@ -143,23 +143,17 @@ public class InMemoryTaskManager implements TaskManager {
 
     @Override
     public Task getSimpleTask(int id) {
-        Task simpleTask = simpleTasks.get(id);
-        historyManager.add(simpleTask);
-        return simpleTask;
+        return getTaskFromStorage(simpleTasks, id);
     }
 
     @Override
     public Epic getEpic(int id) {
-        Epic epic = epics.get(id);
-        historyManager.add(epic);
-        return epic;
+        return getTaskFromStorage(epics, id);
     }
 
     @Override
     public Subtask getSubtask(int id) {
-        Subtask subtask = subtasks.get(id);
-        historyManager.add(subtask);
-        return subtask;
+        return getTaskFromStorage(subtasks, id);
     }
 
     @Override
@@ -216,7 +210,7 @@ public class InMemoryTaskManager implements TaskManager {
                 Subtask subtask = subtasks.get(subId);
 
                if (!Objects.isNull(subtask)) {
-                    epicSubtasks.add(subtask);
+                    epicSubtasks.add(subtask.copy());
                 }
             }
         }
@@ -310,8 +304,26 @@ public class InMemoryTaskManager implements TaskManager {
         final int taskId = setTaskId(task);
 
         if (taskId > 0) {
-            storage.put(taskId,task);
+            storage.put(taskId, (T) task.copy());
         }
+    }
+
+    private <T extends Task> T getTaskFromStorage(Map<Integer, T> storage, int id) {
+        T task = storage.get(id);
+        if (!Objects.isNull(task)) {
+            T taskCopy = (T) task.copy();
+            historyManager.add(taskCopy);
+            return taskCopy;
+        }
+        return null;
+    }
+
+    private <T extends Task> List<T> getTaskListFromStorage(Map<Integer, T> storage) {
+       List<T> taskList = new ArrayList<>();
+       for (T task : storage.values()) {
+           taskList.add((T) task.copy());
+       }
+       return taskList;
     }
 
     private <T extends Task> void clearHistory(Map<Integer, T> storage) {

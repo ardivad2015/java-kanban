@@ -19,4 +19,7 @@ public class Subtask extends Task {
         this.epicId = epicId;
     }
 
+    public Subtask copy() {
+        return new Subtask(this.getEpicId(),this);
+    }
 }

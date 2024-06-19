@@ -1,40 +1,101 @@
 package service;
 
 import model.Task;
-import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.util.Arrays;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 class InMemoryHistoryManagerTest {
 
+    private HistoryManager historyManager;
+
+    @BeforeEach
+    void BeforeEach() {
+        historyManager = new InMemoryHistoryManager();
+    }
     @Test
-    void add() {
-        final HistoryManager historyManager = new InMemoryHistoryManager();
-        final Task task = new Task("Простая задача ","");
+    void addUniqueShouldIncreaseHistorySize() {
+        final Task task1 = new Task("","");
+        final Task task2 = new Task("","");
 
-        historyManager.add(task);
-        assertEquals(1,historyManager.getHistory().size(),"Неверное количество задач в истории");
+        task1.setId(1);
+        task2.setId(2);
 
+        historyManager.add(task1);
+        historyManager.add(task2);
+
+        assertEquals(2,historyManager.getHistory().size(),"Неверное количество задач в истории");
     }
 
     @Test
-    void deleteFirstIfOvermax() {
-        final HistoryManager historyManager = new InMemoryHistoryManager();
+    void addDuplicateShouldNotIncreaseHistorySize() {
         final Task task1 = new Task("","");
-        final Task task11 = new Task("","");
-        historyManager.add(task1);
-        for (int i = 1; i < 10; i++) {
-            historyManager.add(new Task("",""));
-        }
-        historyManager.add(task11);
+        final Task task2 = new Task("","");
 
+        task1.setId(1);
+        task2.setId(1);
+
+        historyManager.add(task1);
+        historyManager.add(task2);
+
+        assertEquals(1,historyManager.getHistory().size(),"Неверное количество задач в истории");
+    }
+
+    @Test
+    void addDuplicateShouldChangeHistoryOrder() {
+        final Task task1 = new Task("","");
+        final Task task2 = new Task("","");
+        final Task task3 = new Task("","");
+
+        task1.setId(1);
+        task2.setId(2);
+        task3.setId(1);
+
+        historyManager.add(task1);
+        historyManager.add(task2);
+        historyManager.add(task3);
+
+        List<Task> expectedHistory = Arrays.asList(task3, task2);
         List<Task> history = historyManager.getHistory();
 
-        assertEquals(10, history.size(), "Элементов истори больше 10");
-        assertNotSame(task1, history.get(0), "Не удаляется первый элемент");
-        assertSame(task11,history.get(9),"Не добавляется задача при переполнении");
+        assertEquals(expectedHistory, history, "Неверный порядок истории");
+    }
+
+    @Test
+    void removeShouldChangeHistorySize() {
+        final HistoryManager historyManager = new InMemoryHistoryManager();
+        final Task task1 = new Task("","");
+
+        task1.setId(1);
+        historyManager.add(task1);
+        historyManager.remove(1);
+
+        assertEquals(0,historyManager.getHistory().size(), "Неверное количество задач в истории");
+    }
+    @Test
+    void removeShouldChangeHistoryOrder() {
+        final HistoryManager historyManager = new InMemoryHistoryManager();
+        final Task task1 = new Task("","");
+        final Task task2 = new Task("","");
+        final Task task3 = new Task("","");
+
+        task1.setId(1);
+        task2.setId(2);
+        task3.setId(3);
+
+        historyManager.add(task1);
+        historyManager.add(task2);
+        historyManager.add(task3);
+
+        historyManager.remove(2);
+
+        List<Task> expectedHistory = Arrays.asList(task3, task1);
+        List<Task> history = historyManager.getHistory();
+
+        assertEquals(expectedHistory, history, "Неверный порядок истории");
     }
 }

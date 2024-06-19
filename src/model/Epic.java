@@ -14,4 +14,10 @@ public class Epic extends Task {
     public List<Integer> getSubtasksId() {
         return subtasksId;
     }
+
+    public Epic copy() {
+        Epic epic = new Epic(this);
+        epic.subtasksId.addAll(this.getSubtasksId());
+        return epic;
+    }
 }
