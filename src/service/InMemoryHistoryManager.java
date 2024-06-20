@@ -2,14 +2,43 @@ package service;
 
 import model.Task;
 
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
-public class InMemoryHistoryManager implements HistoryManager{
+public class InMemoryHistoryManager implements HistoryManager {
 
-    private static final int DEFAULT_CAPACITY = 10;
-    private final List<Task> historyList = new LinkedList<>();
+    private final Map<Integer, Node> nodes = new HashMap<>();
+    private Node lastViewed;
+
+    private void removeNode(Node node) {
+        if (Objects.isNull(node)) {
+            return;
+        }
+
+        Node prev = node.prev;
+        Node next = node.next;
+
+        if (!Objects.isNull(prev)) {
+            prev.next = next;
+        } else {
+            lastViewed = next;
+        }
+        if (!Objects.isNull(next)) {
+            next.prev = prev;
+        }
+    }
+
+    private void addAsLastViewed(Node node) {
+        if (Objects.isNull(node)) {
+            return;
+        }
+
+        node.prev = null;
+        node.next = lastViewed;
+        if (!Objects.isNull(lastViewed)) {
+            lastViewed.prev = node;
+        }
+        lastViewed = node;
+    }
 
     @Override
     public void add(Task task) {
@@ -17,14 +46,69 @@ public class InMemoryHistoryManager implements HistoryManager{
             return;
         }
 
-        if (historyList.size() == DEFAULT_CAPACITY) {
-            historyList.remove(0);
+        int taskId = task.getId();
+        Node node;
+
+        node = nodes.get(taskId);
+        if (Objects.isNull(node)) {
+            node = new Node(task);
+            addAsLastViewed(node);
+            nodes.put(taskId, node);
+        } else {
+            removeNode(node);
+            addAsLastViewed(node);
+            node.task = task;
         }
-        historyList.add(task);
+    }
+
+    @Override
+    public void remove(int taskId) {
+        Node node = nodes.get(taskId);
+
+        if (!Objects.isNull(node)) {
+            removeNode(node);
+            nodes.remove(taskId);
+        }
     }
 
     @Override
     public List<Task> getHistory() {
+        List<Task> historyList = new ArrayList<>();
+
+        if (Objects.isNull(lastViewed)) {
+            return historyList;
+        }
+
+        Node node = lastViewed;
+
+        historyList.add(lastViewed.task);
+        while (Objects.nonNull(node.next)) {
+            node = node.next;
+            historyList.add(node.task);
+        }
         return historyList;
+    }
+
+    private static class Node {
+        Task task;
+        Node prev;
+        Node next;
+
+        Node(Task task) {
+            this.task = task;
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+            Node node = (Node) o;
+            return task.equals(node.task);
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hash(task);
+        }
     }
 }

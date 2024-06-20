@@ -1,7 +1,5 @@
 package model;
 
-import java.util.Objects;
-
 public class Subtask extends Task {
 
     private int epicId;
@@ -19,4 +17,7 @@ public class Subtask extends Task {
         this.epicId = epicId;
     }
 
+    public Subtask copy() {
+        return new Subtask(this.getEpicId(),this);
+    }
 }

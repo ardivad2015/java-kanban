@@ -13,6 +13,10 @@ public class Task {
         return topic;
     }
 
+    public void setTopic(String topic) {
+        this.topic = topic;
+    }
+
     public String getBody() {
         return body;
     }
@@ -20,6 +24,7 @@ public class Task {
     public void setId(int id) {
         this.id = id;
     }
+
     public int getId() {
         return id;
     }
@@ -45,9 +50,14 @@ public class Task {
     }
 
     public Task(Task task) {
+        this.id = task.id;
         this.topic = task.topic;
         this.body = task.body;
-        this.status = TaskStatuses.NEW;
+        this.status = task.status;
+    }
+
+    public Task copy() {
+        return new Task(this);
     }
 
     @Override
