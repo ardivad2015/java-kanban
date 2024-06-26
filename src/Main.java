@@ -1,7 +1,7 @@
 
 import model.*;
 import util.Managers;
-import service.TaskManager;
+import service.tasks.TaskManager;
 
 public class Main {
 

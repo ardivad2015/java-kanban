@@ -7,6 +7,8 @@ import model.Task;
 import model.TaskStatuses;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import service.tasks.InMemoryTaskManager;
+import service.tasks.TaskManager;
 
 import java.util.List;
 

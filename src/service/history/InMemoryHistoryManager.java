@@ -1,6 +1,7 @@
-package service;
+package service.history;
 
 import model.Task;
+import service.history.HistoryManager;
 
 import java.util.*;
 

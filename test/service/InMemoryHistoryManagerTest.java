@@ -3,6 +3,8 @@ package service;
 import model.Task;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import service.history.HistoryManager;
+import service.history.InMemoryHistoryManager;
 
 import java.util.Arrays;
 import java.util.List;

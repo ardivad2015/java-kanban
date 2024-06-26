@@ -1,9 +1,10 @@
-package service;
+package service.tasks;
 
 import model.Epic;
 import model.Subtask;
 import model.Task;
 import model.TaskStatuses;
+import service.history.HistoryManager;
 import util.Managers;
 
 import java.util.*;
