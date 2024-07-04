@@ -16,6 +16,7 @@ class EpicTest {
         epic = new Epic(new Task("Epic1", ""));
         epic.setId(1);
     }
+
     @Test
     void getSubtasksId() {
         List<Integer> subtasksId = epic.getSubtasksId();

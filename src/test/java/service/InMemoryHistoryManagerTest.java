@@ -16,9 +16,10 @@ class InMemoryHistoryManagerTest {
     private HistoryManager historyManager;
 
     @BeforeEach
-    void BeforeEach() {
+    void beforeEach() {
         historyManager = new InMemoryHistoryManager();
     }
+
     @Test
     void addUniqueShouldIncreaseHistorySize() {
         final Task task1 = new Task("","");
@@ -78,6 +79,7 @@ class InMemoryHistoryManagerTest {
 
         assertEquals(0,historyManager.getHistory().size(), "Неверное количество задач в истории");
     }
+
     @Test
     void removeShouldChangeHistoryOrder() {
         final HistoryManager historyManager = new InMemoryHistoryManager();

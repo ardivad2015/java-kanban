@@ -3,13 +3,9 @@ package service.tasks;
 import model.Epic;
 import model.Subtask;
 import model.Task;
-
 import model.TaskStatuses;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import service.tasks.InMemoryTaskManager;
-import service.tasks.TaskManager;
-
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -18,16 +14,17 @@ class InMemoryTaskManagerTest {
     private TaskManager taskManager;
 
     @BeforeEach
-    void BeforeEach() {
+    void beforeEach() {
         taskManager = new InMemoryTaskManager();
     }
+
     @Test
     void addSimpleTask() {
         final Task task = new Task("Простая задача ","Описание");
 
         task.setId(100);
         taskManager.addSimpleTask(task);
-        assertEquals(1,task.getId(),"Неверный id");
+        assertEquals(1,task.getId(), "Неверный id");
         assertEquals(task,taskManager.getSimpleTask(1),"Получение задачи по id. Задачи не совпадают");
 
         final List<Task> tasks = taskManager.getSimpleTaskList();
@@ -47,6 +44,7 @@ class InMemoryTaskManagerTest {
         assertNotEquals(task.getTopic(),taskManager.getSimpleTask(task.getId()),"Изменилось состояние задачи в" +
                 " менеджере");
     }
+
     @Test
     void addSubtask() {
         final Epic epic  = new Epic(new Task("Эпик 1",""));

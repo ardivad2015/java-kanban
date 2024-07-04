@@ -11,11 +11,11 @@ import java.util.*;
 
 public class FileDB {
 
-    public final static String FIELDS_SEPARATOR = ";";
-    public final static String INNER_SEPARATOR = ",";
-    public final static int IDGEN_LINE_NUMBER = 1;
-    public final static int BEGIN_TASK_DATA_LINE_NUMBER = 2;
-    public final static Map<String, Integer> FIELDS = new LinkedHashMap<>();
+    public static final String FIELDS_SEPARATOR = ";";
+    public static final String INNER_SEPARATOR = ",";
+    public static final int IDGEN_LINE_NUMBER = 1;
+    public static final int BEGIN_TASK_DATA_LINE_NUMBER = 2;
+    public static final Map<String, Integer> FIELDS = new LinkedHashMap<>();
 
     static {
         FIELDS.put("id", 0);
