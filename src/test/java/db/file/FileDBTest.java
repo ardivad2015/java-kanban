@@ -24,6 +24,7 @@ class FileDBTest {
     @Test
     void loadFromInvalidFileThrowsIOException() {
         final File file = new File("notexist");
+        assertFalse(file.exists());
         assertThrows(IOException.class, () -> FileDB.loadFromFile(file));
     }
 

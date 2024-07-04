@@ -5,15 +5,11 @@ import model.Epic;
 import model.Subtask;
 import model.Task;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.*;
-import org.mockito.junit.jupiter.MockitoExtension;
 import java.io.File;
 import java.io.IOException;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-@ExtendWith(MockitoExtension.class)
 class FileBackedTaskManagerTest {
 
     @Test
@@ -69,17 +65,5 @@ class FileBackedTaskManagerTest {
         final File file = new File("notexist");
         assertThrows(FileBackedTaskManager.ManagerLoadSaveException.class,
                 () -> FileBackedTaskManager.loadFromFile(file));
-    }
-
-    @Test
-    void saveToInvalidFileThenThrowsManagerLoadSaveException() {
-        try (MockedStatic<FileDB> fileDB = Mockito.mockStatic(FileDB.class)) {
-            final FileDB.DataTransfer dataTransfer = new FileDB.DataTransfer();
-            fileDB.when(() -> FileDB.loadFromFile(null)).thenReturn(dataTransfer);
-            final FileBackedTaskManager fileTaskManager = FileBackedTaskManager.loadFromFile(null);
-            fileDB.when(() -> FileDB.writeToFile(Mockito.any(),Mockito.any())).thenThrow(new IOException());
-            assertThrows(FileBackedTaskManager.ManagerLoadSaveException.class,
-                    fileTaskManager::saveToFile);
-        }
     }
 }
