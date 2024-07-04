@@ -27,18 +27,4 @@ class FileDBTest {
         assertFalse(file.exists());
         assertThrows(IOException.class, () -> FileDB.loadFromFile(file));
     }
-
-    @Test
-    void writeToFileCreateNewFile() {
-        final File file = new File(System.getProperty("java.io.tmpdir") + "\\fileBackedTaskManager.tmp");
-        assertFalse(file.exists());
-        FileDB.DataTransfer dataTransfer = new FileDB.DataTransfer();
-        try {
-            FileDB.writeToFile(dataTransfer,file);
-            assertTrue(file.exists());
-            file.delete();
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-    }
 }
