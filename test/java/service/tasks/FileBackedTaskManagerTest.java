@@ -62,7 +62,7 @@ class FileBackedTaskManagerTest {
     @Test
     void loadFromInvalidFileThenThrowsManagerLoadSaveException() {
         final File file = new File("notexist");
-        assertThrows(FileBackedTaskManager.ManagerLoadSaveException.class,
+        assertThrows(ManagerLoadSaveException.class,
                 () -> FileBackedTaskManager.loadFromFile(file));
     }
 }

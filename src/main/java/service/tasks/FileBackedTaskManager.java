@@ -4,10 +4,12 @@ import db.file.FileDB;
 import model.Epic;
 import model.Subtask;
 import model.Task;
+import model.TaskTypes;
+
 import java.io.*;
 import java.util.Set;
 
-public class FileBackedTaskManager extends InMemoryTaskManager implements TaskManager {
+public class FileBackedTaskManager extends InMemoryTaskManager {
 
     private File file;
 
@@ -21,9 +23,9 @@ public class FileBackedTaskManager extends InMemoryTaskManager implements TaskMa
             throw new ManagerLoadSaveException(e);
         }
         for (Task task : dataTransfer.getTasks()) {
-            if (task instanceof Epic) {
+            if (task.getType() == TaskTypes.EPIC) {
                 fileBackedTaskManager.epics.put(task.getId(), (Epic) task);
-            } else if (task instanceof Subtask) {
+            } else if (task.getType() == TaskTypes.SUBTASK) {
                 fileBackedTaskManager.subtasks.put(task.getId(), (Subtask) task);
             } else {
                 fileBackedTaskManager.simpleTasks.put(task.getId(), task);
@@ -165,12 +167,5 @@ public class FileBackedTaskManager extends InMemoryTaskManager implements TaskMa
     public void removeSubtask(int id) {
         super.removeSubtask(id);
         saveToFile();
-    }
-
-    static class ManagerLoadSaveException extends RuntimeException {
-
-        public ManagerLoadSaveException(Throwable cause) {
-            super(cause);
-        }
     }
 }

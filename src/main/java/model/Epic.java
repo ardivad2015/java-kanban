@@ -9,6 +9,7 @@ public class Epic extends Task {
 
     public Epic(Task task) {
         super(task);
+        this.setType(TaskTypes.EPIC);
     }
 
     public List<Integer> getSubtasksId() {

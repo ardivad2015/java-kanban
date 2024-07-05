@@ -1,9 +1,6 @@
 package db.file;
 
-import model.Epic;
-import model.Subtask;
-import model.Task;
-import model.TaskStatuses;
+import model.*;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
@@ -143,7 +140,7 @@ public class FileDB {
         taskData.put("body", task.getBody());
         taskData.put("status", task.getStatus().name());
 
-        if (task instanceof Epic) {
+        if (task.getType() == TaskTypes.EPIC) {
             type = "2";
             final StringBuilder sb = new StringBuilder();
 
@@ -154,7 +151,7 @@ public class FileDB {
                 sb.append(subId);
             }
             taskData.put("subtasks", sb.toString());
-        } else if (task instanceof Subtask) {
+        } else if (task.getType() == TaskTypes.SUBTASK) {
             type = "3";
             taskData.put("epic", Integer.toString(((Subtask) task).getEpicId()));
         } else {

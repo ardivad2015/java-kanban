@@ -1,9 +1,6 @@
 package service.tasks;
 
-import model.Epic;
-import model.Subtask;
-import model.Task;
-import model.TaskStatuses;
+import model.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import java.util.List;

@@ -8,6 +8,15 @@ public class Task {
     private String topic;
     private String body;
     private TaskStatuses status;
+    private TaskTypes type;
+
+    public void setType(TaskTypes type) {
+        this.type = type;
+    }
+
+    public TaskTypes getType() {
+        return type;
+    }
 
     public String getTopic() {
         return topic;
@@ -47,6 +56,7 @@ public class Task {
         this.topic = topic;
         this.body = body;
         this.status = TaskStatuses.NEW;
+        this.type = TaskTypes.SiMPLETASK;
     }
 
     public Task(Task task) {
@@ -54,6 +64,7 @@ public class Task {
         this.topic = task.topic;
         this.body = task.body;
         this.status = task.status;
+        this.type = task.type;
     }
 
     public Task copy() {
@@ -62,12 +73,17 @@ public class Task {
 
     @Override
     public String toString() {
-        return "{" +
-                "id=" + id +
-                ", topic='" + topic + '\'' +
-                ", body='" + body + '\'' +
-                ", status=" + status +
-                '}';
+        String sb = type +
+                ": " +
+                "id= " +
+                id +
+                ", topic= " +
+                topic +
+                ", body= " +
+                body +
+                ", status= " +
+                status;
+        return sb;
     }
 
     @Override
