@@ -1,4 +1,4 @@
-package service;
+package service.tasks;
 
 import model.Epic;
 import model.Subtask;

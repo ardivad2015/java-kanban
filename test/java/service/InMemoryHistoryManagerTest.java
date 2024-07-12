@@ -3,6 +3,8 @@ package service;
 import model.Task;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import service.history.HistoryManager;
+import service.history.InMemoryHistoryManager;
 
 import java.util.Arrays;
 import java.util.List;
@@ -14,9 +16,10 @@ class InMemoryHistoryManagerTest {
     private HistoryManager historyManager;
 
     @BeforeEach
-    void BeforeEach() {
+    void beforeEach() {
         historyManager = new InMemoryHistoryManager();
     }
+
     @Test
     void addUniqueShouldIncreaseHistorySize() {
         final Task task1 = new Task("","");
@@ -76,6 +79,7 @@ class InMemoryHistoryManagerTest {
 
         assertEquals(0,historyManager.getHistory().size(), "Неверное количество задач в истории");
     }
+
     @Test
     void removeShouldChangeHistoryOrder() {
         final HistoryManager historyManager = new InMemoryHistoryManager();

@@ -1,12 +1,11 @@
 
 import model.*;
 import util.Managers;
-import service.TaskManager;
+import service.tasks.TaskManager;
 
 public class Main {
 
     public static void main(String[] args) {
-
         TaskManager taskManager = Managers.getDefaultTaskManager();
 
         Task task1 = new Task("Простая задача 1","");
@@ -23,9 +22,9 @@ public class Main {
 
         int epic1Id = epic1.getId();
 
-        Subtask subtask1 = new Subtask(epic1Id,new Task("Подзадача 1",""));
-        Subtask subtask2 = new Subtask(epic1Id,new Task("Подзадача 2",""));
-        Subtask subtask3 = new Subtask(epic1Id,new Task("Подзадача 3",""));
+        Subtask subtask1 = new Subtask(epic1Id,new Task("Подзадача 1", ""));
+        Subtask subtask2 = new Subtask(epic1Id,new Task("Подзадача 2", ""));
+        Subtask subtask3 = new Subtask(epic1Id,new Task("Подзадача 3", ""));
 
         taskManager.addSubtask(subtask1);
         taskManager.addSubtask(subtask2);
