@@ -7,6 +7,7 @@ import util.Managers;
 import javax.swing.*;
 import java.time.LocalDateTime;
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class InMemoryTaskManager implements TaskManager {
 
