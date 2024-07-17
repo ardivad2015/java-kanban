@@ -3,13 +3,25 @@ package service.tasks;
 import model.Epic;
 import model.Subtask;
 import model.Task;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import java.io.File;
 import java.io.IOException;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-class FileBackedTaskManagerTest {
+class FileBackedTaskManagerTest extends TaskManagerTest<FileBackedTaskManager> {
+    @BeforeEach
+    void beforeEach() {
+        try {
+            File file = File.createTempFile("fileTaskManager", ".tmp");
+            taskManager = FileBackedTaskManager.loadFromFile(file);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        } catch (ManagerLoadSaveException e) {
+            throw new ManagerLoadSaveException(e);
+        }
+    }
 
     @Test
     void loadedFromFileTaskManagerIsEqualsOriginalWhenItIsEmpty() {
