@@ -65,9 +65,6 @@ public class Task {
     }
 
     public LocalDateTime getStartTime() {
-        if (Objects.isNull(startTime)) {
-            return null;
-        }
         return startTime;
     }
 
@@ -119,7 +116,7 @@ public class Task {
         this.topic = topic;
         this.body = body;
         this.status = TaskStatuses.NEW;
-        this.type = TaskTypes.SiMPLETASK;
+        this.type = TaskTypes.SIMPLE_TASK;
     }
 
     public Task(String topic, String body, String startTime, int durationMinutes) {

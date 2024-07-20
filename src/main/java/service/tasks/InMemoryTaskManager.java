@@ -4,7 +4,6 @@ import model.*;
 import service.history.HistoryManager;
 import util.Managers;
 
-import javax.swing.*;
 import java.time.LocalDateTime;
 import java.util.*;
 
@@ -116,7 +115,7 @@ public class InMemoryTaskManager implements TaskManager {
         if (Objects.nonNull(task.getStartTime()) && task.getType() != TaskTypes.EPIC) {
             TreeSet<Task> sortedTasksCopy = new TreeSet<>(sortedTasks);
             Task currentTask;
-            if (taskType == TaskTypes.SiMPLETASK) {
+            if (taskType == TaskTypes.SIMPLE_TASK) {
                 currentTask = simpleTasks.get(task.getId());
             } else {
                 currentTask = subtasks.get(task.getId());
@@ -145,7 +144,7 @@ public class InMemoryTaskManager implements TaskManager {
     protected void addToSortedTasks(Task task) {
         TaskTypes taskType = task.getType();
         Task currentTask;
-        if (taskType == TaskTypes.SiMPLETASK) {
+        if (taskType == TaskTypes.SIMPLE_TASK) {
             currentTask = simpleTasks.get(task.getId());
         } else {
             currentTask = subtasks.get(task.getId());
@@ -168,7 +167,7 @@ public class InMemoryTaskManager implements TaskManager {
 
         if (validateTaskInterval(task)) {
             switch (taskCopy.getType()) {
-                case SiMPLETASK -> {
+                case SIMPLE_TASK -> {
                     simpleTasks.put(taskId, taskCopy);
                     addToSortedTasks(taskCopy);
                 }
