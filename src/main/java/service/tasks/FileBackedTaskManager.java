@@ -27,8 +27,10 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
                 fileBackedTaskManager.epics.put(task.getId(), (Epic) task);
             } else if (task.getType() == TaskTypes.SUBTASK) {
                 fileBackedTaskManager.subtasks.put(task.getId(), (Subtask) task);
+                fileBackedTaskManager.addToSortedTasks(task);
             } else {
                 fileBackedTaskManager.simpleTasks.put(task.getId(), task);
+                fileBackedTaskManager.addToSortedTasks(task);
             }
         }
         fileBackedTaskManager.idGen = dataTransfer.getIdGen();
@@ -57,8 +59,8 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
             final File file = File.createTempFile("fileTaskManager", ".tmp");
             final FileBackedTaskManager taskManager = FileBackedTaskManager.loadFromFile(file);
 
-            final Task task1 = new Task("Простая задача 1", "");
-            final Task task2 = new Task("Простая задача 2", "");
+            final Task task1 = new Task("Простая задача 1", "","01.01.24 00:00", 30);
+            final Task task2 = new Task("Простая задача 2", "","02.01.24 00:00", 30);
 
             taskManager.addSimpleTask(task1);
             taskManager.addSimpleTask(task2);
@@ -71,9 +73,9 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
 
             final int epic1Id = epic1.getId();
 
-            final Subtask subtask1 = new Subtask(epic1Id, new Task("Подзадача 1", ""));
-            final Subtask subtask2 = new Subtask(epic1Id, new Task("Подзадача 2", ""));
-            final Subtask subtask3 = new Subtask(epic1Id, new Task("Подзадача 3", ""));
+            final Subtask subtask1 = new Subtask(epic1Id, new Task("Подзадача 1", "","03.01.24 00:00", 30));
+            final Subtask subtask2 = new Subtask(epic1Id, new Task("Подзадача 2", "","04.01.24 00:00", 30));
+            final Subtask subtask3 = new Subtask(epic1Id, new Task("Подзадача 3", "","05.01.24 00:00", 30));
 
             taskManager.addSubtask(subtask1);
             taskManager.addSubtask(subtask2);

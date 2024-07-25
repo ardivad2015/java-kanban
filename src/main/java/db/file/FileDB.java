@@ -20,8 +20,11 @@ public class FileDB {
         FIELDS.put("topic", 2);
         FIELDS.put("status", 3);
         FIELDS.put("body", 4);
-        FIELDS.put("epic", 5);
-        FIELDS.put("subtasks", 6);
+        FIELDS.put("starttime", 5);
+        FIELDS.put("duration", 6);
+        FIELDS.put("endtime", 7);
+        FIELDS.put("epic", 8);
+        FIELDS.put("subtasks", 9);
     }
 
     public static DataTransfer loadFromFile(File file) throws IOException {
@@ -90,9 +93,13 @@ public class FileDB {
 
         task.setStatus(TaskStatuses.valueOf(taskData.get("status")));
         task.setId(Integer.parseInt(taskData.get("id")));
+        task.setStartTime(taskData.get("starttime"));
+        task.setDuration(Integer.parseInt(taskData.get("duration")));
+
         if ("2".equals(taskType)) {
             final Epic epic = new Epic(task);
 
+            epic.setEndTime(taskData.get("endtime"));
             if (!taskData.get("subtasks").isBlank()) {
                 String[] subsId = taskData.get("subtasks").split(INNER_SEPARATOR);
 
@@ -134,11 +141,16 @@ public class FileDB {
     private static Map<String, String> getTaskDataFromTask(Task task) {
         final Map<String, String> taskData = new HashMap<>();
         final String type;
+        String startTime = "";
+        String endTime = "";
 
         taskData.put("id", Integer.toString(task.getId()));
         taskData.put("topic", task.getTopic());
         taskData.put("body", task.getBody());
         taskData.put("status", task.getStatus().name());
+        taskData.put("starttime", task.getFormattedStartTime());
+        taskData.put("endtime", task.getFormattedEndTime());
+        taskData.put("duration", Integer.toString(task.getDuration()));
 
         if (task.getType() == TaskTypes.EPIC) {
             type = "2";

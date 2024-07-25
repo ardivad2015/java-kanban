@@ -2,7 +2,7 @@ package model;
 
 public enum TaskTypes {
 
-        SiMPLETASK,
+        SIMPLE_TASK,
         EPIC,
         SUBTASK
 
