@@ -1,6 +1,9 @@
 package service.tasks;
 
 import model.*;
+import service.exceptions.IntersectionOfTasksException;
+import service.exceptions.NullTaskInArgument;
+import service.exceptions.TaskNotFoundException;
 import service.history.HistoryManager;
 import util.Managers;
 
@@ -101,16 +104,14 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
     private int setTaskId(Task task) {
-        if (Objects.isNull(task)) {
-            return -1;
-        }
         idGen = idGen + 1;
         task.setId(idGen);
         return idGen;
     }
 
-    private boolean validateTaskInterval(Task task) {
-        TaskTypes taskType = task.getType();
+    private Optional<Task> validateTaskInterval(Task task) {
+        final TaskTypes taskType = task.getType();
+        Optional<Task> conflictTask = Optional.empty();
 
         if (Objects.nonNull(task.getStartTime()) && task.getType() != TaskTypes.EPIC) {
             TreeSet<Task> sortedTasksCopy = new TreeSet<>(sortedTasks);
@@ -123,9 +124,8 @@ public class InMemoryTaskManager implements TaskManager {
             if (Objects.nonNull(currentTask)) {
                 sortedTasksCopy.remove(currentTask);
             }
-            Task lowerTask = sortedTasksCopy.lower(task);
-            Task higherTask = sortedTasksCopy.higher(task);
-            Optional<Task> conflictTask = Optional.empty();
+            Task lowerTask = sortedTasksCopy.floor(task);
+            Task higherTask = sortedTasksCopy.ceiling(task);
 
             if (Objects.nonNull(lowerTask) && lowerTask.getEndTime().isAfter(task.getStartTime())) {
                 conflictTask = Optional.of(lowerTask);
@@ -133,16 +133,12 @@ public class InMemoryTaskManager implements TaskManager {
             if (Objects.nonNull(higherTask) && task.getEndTime().isAfter(higherTask.getStartTime())) {
                 conflictTask = Optional.of(higherTask);
             }
-            if (conflictTask.isPresent()) {
-                System.out.println("Интервал выполнения задачи пересекается с задачей " + conflictTask.get());
-                return false;
-            }
         }
-        return true;
+        return conflictTask;
     }
 
     protected void addToSortedTasks(Task task) {
-        TaskTypes taskType = task.getType();
+        final TaskTypes taskType = task.getType();
         Task currentTask;
         if (taskType == TaskTypes.SIMPLE_TASK) {
             currentTask = simpleTasks.get(task.getId());
@@ -158,25 +154,29 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
     private void addTaskStorage(Task task) {
-        final int taskId = setTaskId(task);
-
-        if (taskId < 0) {
-            return;
+        if (Objects.isNull(task)) {
+            throw new NullTaskInArgument();
         }
-        Task taskCopy = task.copy();
 
-        if (validateTaskInterval(task)) {
+        final int taskId = setTaskId(task);
+        final Task taskCopy = task.copy();
+        final Optional<Task> conflictTask = validateTaskInterval(task);
+
+        if (conflictTask.isEmpty()) {
             switch (taskCopy.getType()) {
                 case SIMPLE_TASK -> {
                     simpleTasks.put(taskId, taskCopy);
                     addToSortedTasks(taskCopy);
                 }
-                case EPIC ->  epics.put(taskId, (Epic) taskCopy);
+                case EPIC -> epics.put(taskId, (Epic) taskCopy);
                 case SUBTASK -> {
                     subtasks.put(taskId, (Subtask) taskCopy);
                     addToSortedTasks(taskCopy);
                 }
             }
+        } else {
+            throw new IntersectionOfTasksException("Интервал выполнения задачи пересекается с задачей " +
+                    conflictTask.get());
         }
     }
 
@@ -187,7 +187,7 @@ public class InMemoryTaskManager implements TaskManager {
             historyManager.add(taskCopy);
             return taskCopy;
         }
-        return null;
+        throw new TaskNotFoundException(String.valueOf(id));
     }
 
     private <T extends Task> List<T> getTaskListFromStorage(Map<Integer, T> storage) {
@@ -213,10 +213,13 @@ public class InMemoryTaskManager implements TaskManager {
     @Override
     public void updateSimpleTask(Task task) {
         if (Objects.isNull(task)) {
-            return;
+            throw new NullTaskInArgument();
         }
-        if (!validateTaskInterval(task)) {
-            return;
+        Optional<Task> conflictTask = validateTaskInterval(task);
+
+        if (conflictTask.isPresent()) {
+            throw new IntersectionOfTasksException("Интервал выполнения задачи пересекается с задачей " +
+                    conflictTask.get());
         }
         final Task taskCopy = task.copy();
         simpleTasks.put(task.getId(), taskCopy);
@@ -226,7 +229,7 @@ public class InMemoryTaskManager implements TaskManager {
     @Override
     public void updateEpic(Epic newEpic) {
         if (Objects.isNull(newEpic)) {
-            return;
+            throw new NullTaskInArgument();
         }
         final int epicId = newEpic.getId();
         final List<Integer> newEpicSubIds = newEpic.getSubtasksId();
@@ -273,10 +276,13 @@ public class InMemoryTaskManager implements TaskManager {
     @Override
     public void updateSubtask(Subtask newSubtask) {
         if (Objects.isNull(newSubtask)) {
-            return;
+            throw new NullTaskInArgument();
         }
-        if (!validateTaskInterval(newSubtask)) {
-            return;
+        Optional<Task> conflictTask = validateTaskInterval(newSubtask);
+
+        if (conflictTask.isPresent()) {
+            throw new IntersectionOfTasksException("Интервал выполнения задачи пересекается с задачей " +
+                    conflictTask.get());
         }
         final int subtaskId = newSubtask.getId();
         final Subtask currentSubtask = subtasks.get(subtaskId);
@@ -369,7 +375,7 @@ public class InMemoryTaskManager implements TaskManager {
         final Task task = simpleTasks.get(id);
 
         if (Objects.isNull(task)) {
-            return;
+            throw new TaskNotFoundException(String.valueOf(id));
         }
         simpleTasks.remove(id);
         historyManager.remove(id);
@@ -381,7 +387,7 @@ public class InMemoryTaskManager implements TaskManager {
         final Epic epic = epics.get(id);
 
         if (Objects.isNull(epic)) {
-            return;
+            throw new TaskNotFoundException(String.valueOf(id));
         }
         final List<Integer> epicSubIds = epic.getSubtasksId();
 
@@ -407,7 +413,7 @@ public class InMemoryTaskManager implements TaskManager {
         final Subtask subtask = subtasks.get(id);
 
         if (Objects.isNull(subtask)) {
-            return;
+            throw new TaskNotFoundException(String.valueOf(id));
         }
         editEpicSubIdsList(EpicSubsActions.REMOVE,subtask);
         subtasks.remove(id);

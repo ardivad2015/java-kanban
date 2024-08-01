@@ -2,8 +2,9 @@ package service.tasks;
 
 import model.*;
 import org.junit.jupiter.api.Test;
+import service.exceptions.IntersectionOfTasksException;
+import service.exceptions.TaskNotFoundException;
 import java.util.List;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 abstract class TaskManagerTest<T extends TaskManager> {
@@ -98,8 +99,8 @@ abstract class TaskManagerTest<T extends TaskManager> {
         subsUpdIds.add(subtask3.getId());
 
         taskManager.updateEpic(epic1Upd);
-
-        assertNull(taskManager.getSubtask(subtask1.getId()),"Не удаляется подзадача");
+        assertThrows(TaskNotFoundException.class,
+                () -> taskManager.getSubtask(subtask1.getId()));
         assertEquals(epic1Id,taskManager.getSubtask(subtask3.getId()).getEpicId(),
                 "Не обновляется id эпика добавленной подздачаи");
         assertFalse(taskManager.getEpic(epic2Id).getSubtasksId().contains(subtask3.getId()),
@@ -275,8 +276,8 @@ abstract class TaskManagerTest<T extends TaskManager> {
         task2.setStartTime("01.01.24 00:29");
         task2.setDuration(30);
         taskManager.addSimpleTask(task);
-        taskManager.addSimpleTask(task2);
-        assertEquals(1,taskManager.getSimpleTaskList().size());
+        assertThrows(IntersectionOfTasksException.class,
+                () -> taskManager.addSimpleTask(task2));
     }
 
     @Test
